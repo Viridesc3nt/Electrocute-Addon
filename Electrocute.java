@@ -88,7 +88,7 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
     }
 
     private void zigZag() {
-        Vector ortho = GeneralMethods.getOrthogonalVector(direction, Math.random(), Math.random() * 360);
+        Vector ortho = GeneralMethods.getOrthogonalVector(direction, Math.random() * 360, 0.25 + Math.random() * 0.5);
         Vector out = direction.clone().add(ortho).multiply(INCREMENT);
         Vector in = direction.clone().subtract(ortho).multiply(INCREMENT);
         for (double d = 0; d < 1; d += INCREMENT) {
