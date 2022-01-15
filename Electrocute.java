@@ -3,6 +3,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.LightningAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import org.bukkit.Color;
@@ -25,26 +26,34 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
     private static final String AUTHOR = "&2Viridescent_";
     private static final String VERSION = "&21.0.0";
     private static final String NAME = "Electrocute";
-    private static final double SPEED = 2;
-    private static final long COOLDOWN = 6000;
+    private double SPEED;
+    private long COOLDOWN;
     private double distanceTravelled;
     private Permission perm;
-    public static final long RANGE = 20;
-    private static final long DAMAGE = 1;
-    private static final int SHOCK_TIME = 70;
-    private static final double INCREMENT = .2;
-
-    Random rand = new Random();
+    public long RANGE;
+    private long DAMAGE;
+    private int SHOCK_TIME;
+    private double INCREMENT;
+    static String path = "ExtraAbilities.Viridescent_.Lightning.Electrocute.";
 
 
     private ElectrocuteListener listener;
     private Location location;
     private Vector direction;
 
+    private void setFields() {
+        SPEED = ConfigManager.defaultConfig.get().getLong(path+"SPEED");
+        COOLDOWN = ConfigManager.defaultConfig.get().getLong(path+"COOLDOWN");;
+        RANGE = ConfigManager.defaultConfig.get().getLong(path+"RANGE");;
+        DAMAGE = ConfigManager.defaultConfig.get().getLong(path+"DAMAGE");;
+        SHOCK_TIME = ConfigManager.defaultConfig.get().getInt(path+"SHOCK_TIME");;
+        INCREMENT = ConfigManager.defaultConfig.get().getDouble(path+"Increment");;
+    }
+
 
     public Electrocute(Player player) {
         super(player);
-
+        setFields();
         location = player.getEyeLocation();
         direction = player.getEyeLocation().getDirection();
         direction.multiply(SPEED);
@@ -53,10 +62,16 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
 
 
         if(!bPlayer.isOnCooldown(this)) {
+
             start();
             bPlayer.addCooldown(this);
 
         }
+
+
+
+
+
 
 
     }
@@ -71,15 +86,12 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
             }
 
 
-            int chanceOfStun = rand.nextInt(4);
 
-            if (target instanceof LivingEntity && chanceOfStun == 2) {
+
+            if (target instanceof LivingEntity) {
                 DamageHandler.damageEntity(target, DAMAGE, this);
                 ((LivingEntity)target).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, SHOCK_TIME, 255));
 
-
-            } else {
-                DamageHandler.damageEntity(target, DAMAGE, this);
 
             }
 
@@ -93,13 +105,13 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
         Vector in = direction.clone().subtract(ortho).multiply(INCREMENT);
         for (double d = 0; d < 1; d += INCREMENT) {
             location.add(out);
-            playLightningbendingSound(location);
+
             ParticleEffect.REDSTONE.display(location, 1, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(0, 255 ,255), (float) 1.2));
         }
 
         for (double d = 0; d < 1; d += INCREMENT) {
             location.add(in);
-            playLightningbendingSound(location);
+
             ParticleEffect.REDSTONE.display(location, 1, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(0, 255 ,255), (float) 1.2));
         }
 
@@ -123,7 +135,7 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
            remove();
            return;
        }
-
+       playLightningbendingSound(location);
        affectTargets();
        zigZag();
 
@@ -162,9 +174,17 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
 
     @Override
     public void load() {
+
         ProjectKorra.log.info(this.getName() + " by " + this.getAuthor() + "" + this.getVersion() + "has been loaded!");
         listener = new ElectrocuteListener();
         ProjectKorra.plugin.getServer().getPluginManager().registerEvents(listener, ProjectKorra.plugin);
+        ConfigManager.defaultConfig.get().addDefault(path+"INCREMENT", .02);
+        ConfigManager.defaultConfig.get().addDefault(path+"COOLDOWN", 9000);
+        ConfigManager.defaultConfig.get().addDefault(path+"RANGE", 15);
+        ConfigManager.defaultConfig.get().addDefault(path+"SPEED", 2);
+        ConfigManager.defaultConfig.get().addDefault(path+"SHOCK_TIME", 70);
+        ConfigManager.defaultConfig.save();
+
         perm = new Permission("bending.ability.Electrocution");
         ProjectKorra.plugin.getServer().getPluginManager().addPermission(perm);
     }
