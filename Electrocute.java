@@ -57,12 +57,8 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
         location = player.getEyeLocation();
         direction = player.getEyeLocation().getDirection();
         direction.multiply(SPEED);
-
         distanceTravelled = 0;
-
-
         if(!bPlayer.isOnCooldown(this)) {
-
             start();
             bPlayer.addCooldown(this);
 
