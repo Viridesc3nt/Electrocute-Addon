@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.ability.LightningAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -23,8 +24,9 @@ import java.util.Random;
 
 public final class Electrocute extends LightningAbility implements AddonAbility {
 
-    private static final String AUTHOR = "&2Viridescent_";
-    private static final String VERSION = "&21.0.0";
+
+    private static final String AUTHOR = ChatColor.RED + "Viridescent_";
+    private static final String VERSION = ChatColor.RED + "1.0.0";
     private static final String NAME = "Electrocute";
     private double SPEED;
     private long COOLDOWN;
@@ -59,6 +61,7 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
         direction.multiply(SPEED);
         distanceTravelled = 0;
         if(!bPlayer.isOnCooldown(this)) {
+
             start();
             bPlayer.addCooldown(this);
 
@@ -87,16 +90,28 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
         Vector ortho = GeneralMethods.getOrthogonalVector(direction, Math.random() * 360, 0.25 + Math.random() * 0.5);
         Vector out = direction.clone().add(ortho).multiply(INCREMENT);
         Vector in = direction.clone().subtract(ortho).multiply(INCREMENT);
-        for (double d = 0; d < 1; d += INCREMENT) {
+        double distance = SPEED / Math.cos(direction.angle(out));
+        for (double d = 0; d < distance; d += INCREMENT) {
             location.add(out);
-            ParticleEffect.REDSTONE.display(location, 1, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(0, 255 ,255), (float) 1.2));
+            ParticleEffect.REDSTONE.display(location, 1, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(0, 230 ,255), (float) 1.2));
         }
-        for (double d = 0; d < 1; d += INCREMENT) {
+        for (double d = 0; d < distance; d += INCREMENT) {
             location.add(in);
-            ParticleEffect.REDSTONE.display(location, 1, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(0, 255 ,255), (float) 1.2));
+            ParticleEffect.REDSTONE.display(location, 1, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(0, 230 ,255), (float) 1.2));
         }
 
     }
+
+
+
+    @Override
+    public String getDescription() {
+        return ChatColor.RED + "Electrocute is a LightningBending technique that allows the user to build up charge in their body and \n release it from their fingertips. This ability also disables your opponents Chakra network temporarily, paralyzing them in the process.";
+
+    }
+
+
+
 
     @Override
     public void progress() {
@@ -144,6 +159,12 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
     @Override
     public Location getLocation() {
         return location;
+    }
+
+    @Override
+    public String getInstructions() {
+
+        return ChatColor.RED + "LEFT-CLICK at an opponent to shoot a bolt of Lightning at them. Upon impact, your opponent will be stunned.";
     }
 
     @Override
