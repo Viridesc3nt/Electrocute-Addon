@@ -43,11 +43,11 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
 
     private void setFields() {
         SPEED = ConfigManager.defaultConfig.get().getLong(path+"SPEED");
-        COOLDOWN = ConfigManager.defaultConfig.get().getLong(path+"COOLDOWN");;
-        RANGE = ConfigManager.defaultConfig.get().getLong(path+"RANGE");;
-        DAMAGE = ConfigManager.defaultConfig.get().getLong(path+"DAMAGE");;
-        SHOCK_TIME = ConfigManager.defaultConfig.get().getInt(path+"SHOCK_TIME");;
-        INCREMENT = ConfigManager.defaultConfig.get().getDouble(path+"Increment");;
+        COOLDOWN = ConfigManager.defaultConfig.get().getLong(path+"COOLDOWN");
+        RANGE = ConfigManager.defaultConfig.get().getLong(path+"RANGE");
+        DAMAGE = ConfigManager.defaultConfig.get().getLong(path+"DAMAGE");
+        SHOCK_TIME = ConfigManager.defaultConfig.get().getInt(path+"SHOCK_TIME");
+        INCREMENT = ConfigManager.defaultConfig.get().getDouble(path+"INCREMENT");
     }
 
 
@@ -68,12 +68,6 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
 
         }
 
-
-
-
-
-
-
     }
 
     private void affectTargets() {
@@ -82,17 +76,11 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
         for (Entity target : targets) {
             if (target.getUniqueId() == player.getUniqueId()) {
                 continue;
-
             }
-
-
-
 
             if (target instanceof LivingEntity) {
                 DamageHandler.damageEntity(target, DAMAGE, this);
                 ((LivingEntity)target).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, SHOCK_TIME, 255));
-
-
             }
 
         }
@@ -105,30 +93,24 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
         Vector in = direction.clone().subtract(ortho).multiply(INCREMENT);
         for (double d = 0; d < 1; d += INCREMENT) {
             location.add(out);
-
             ParticleEffect.REDSTONE.display(location, 1, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(0, 255 ,255), (float) 1.2));
         }
-
         for (double d = 0; d < 1; d += INCREMENT) {
             location.add(in);
-
             ParticleEffect.REDSTONE.display(location, 1, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(0, 255 ,255), (float) 1.2));
         }
 
     }
-
 
     @Override
     public void progress() {
         if(!bPlayer.canBendIgnoreCooldowns(this)) {
             remove();
             return;
-
         }
        if(location.getBlock().getType().isSolid()) {
            remove();
            return;
-
        }
 
        if(distanceTravelled > RANGE) {
@@ -138,13 +120,9 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
        playLightningbendingSound(location);
        affectTargets();
        zigZag();
-
        distanceTravelled += direction.length();
 
-
     }
-
-
 
     @Override
     public boolean isSneakAbility() {
@@ -174,7 +152,6 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
 
     @Override
     public void load() {
-
         ProjectKorra.log.info(this.getName() + " by " + this.getAuthor() + "" + this.getVersion() + "has been loaded!");
         listener = new ElectrocuteListener();
         ProjectKorra.plugin.getServer().getPluginManager().registerEvents(listener, ProjectKorra.plugin);
@@ -184,7 +161,6 @@ public final class Electrocute extends LightningAbility implements AddonAbility 
         ConfigManager.defaultConfig.get().addDefault(path+"SPEED", 2);
         ConfigManager.defaultConfig.get().addDefault(path+"SHOCK_TIME", 70);
         ConfigManager.defaultConfig.save();
-
         perm = new Permission("bending.ability.Electrocution");
         ProjectKorra.plugin.getServer().getPluginManager().addPermission(perm);
     }
